@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Me!!!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #87CEEB;
+            position: relative;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .icon {
+            width: 80px;
+            position: absolute;
+            text-align: center;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+        }
+
+        .icon img {
+            width: 64px;
+            height: 64px;
+        }
+
+        .toolbar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(0, 50, 150, 0.10);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 20px;
+            box-sizing: border-box;
+        }
+
+        .toolbar div {
+            display: flex;
+            align-items: center;
+        }
+
+        .toolbar img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .time {
+            margin-left: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #2b2b2b;
+            color: white;
+            width: 550px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            background-color: #1c1c1c;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .modal-header .title {
+            font-size: 16px;
+        }
+
+        .close {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .media-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .media-controls button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: #444;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #1e90ff;
+            width: 0%;
+        }
+
+        audio {
+            display: none;
+        }
+
+        .headerDivider {
+            border-left: 1px solid #38546d;
+            border-right: 1px solid #16222c;
+            height: 75px;
+            position: absolute;
+            right: 10px;
+            top: 0px;
+        }
+    </style>
+    <link href="fontawesome/css/all.css" rel="stylesheet" />
+    <link href="fontawesome/css/v4-shims.css" rel="stylesheet" />
+</head>
+
+<body>
+    <img src="map.png" alt="" style="width: 100%;height: 100%;">
+
+    <div class="icon" id="icon1" style="top: 50px; left: 30px;">
+        <img src="Songs/Carolina-O.png" alt="Carolina-O">
+        <div>Opener.mp3</div>
+    </div>
+    <div class="icon" id="icon2" style="top: 150px; left: 30px;">
+        <img src="Songs/ProphecyoftheDeep.png" alt="Prophecy Of The Deep 4">
+        <div>Headliner Track.mp3</div>
+    </div>
+    <div class="icon" id="icon3" style="top: 250px; left: 30px;">
+        <img src="Songs/LoveMeThrice.png" alt="Love Me Thrice">
+        <div>Closing Track.mp3</div>
+    </div>
+    <div class="icon" id="icon4" style="top: 350px; left: 30px;">
+        <img src="Songs/MorningWood.png" alt="Morning Wood">
+        <div>Bonus Track.mp3</div>
+    </div>
+
+    <div class="icon" id="icon5" style="top: 30%; left: 45%;">
+        <img src="winrar-icon-png-21.jpg" alt="Archive File">
+        <div>My_Deepest_Secrets.zip</div>
+    </div>
+
+    <div class="icon" id="icon6" style="top: 25%; left: 50%;display:none">
+        <img src="folder.png" alt="Folder">
+        <div>My Deepest Secrets.txt</div>
+    </div>
+
+    <div class="icon" id="icon7" style="top: 60%; left: 75%;">
+        <img src="folder.png" alt="Folder">
+        <div>TarotCards.txt</div>
+    </div>
+
+    <div id="audioModal1" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="title">Media Player</span>
+                <span class="close" id="close1">&times;</span>
+            </div>
+            <div class="modal-body">
+                <u><b>Unnamed Album</b></u>
+                <p>1) Carolina-O</p>
+                <img src="Songs/Carolina-O.png" alt="Carolina-O" style="width:450px; height:450px">
+                <div class="progress-bar">
+                    <div class="progress" id="progress1"></div>
+                </div>
+                <div class="media-controls">
+                    <button id="playPause1">&#9658;</button>
+                    <button id="stop1">&#9632;</button>
+                </div>
+                <audio id="audio1">
+                    <source src="songs/Carolina-O.mp3" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </div>
+    <div id="audioModal2" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="title">Media Player</span>
+                <span class="close" id="close2">&times;</span>
+            </div>
+            <div class="modal-body">
+                <u><b>Unnamed Album</b></u>
+                <p>2) Prophecy Of The Deep</p>
+                <img src="Songs/ProphecyoftheDeep.png" alt="Prophecy Of The Deep 4" style="width:450px; height:450px">
+                <div class="progress-bar">
+                    <div class="progress" id="progress2"></div>
+                </div>
+                <div class="media-controls">
+                    <button class="playButton" id="playPause2">&#9658;</button>
+                    <button id="stop2">&#9632;</button>
+                </div>
+                <audio id="audio2">
+                    <source src="songs/ProphecyoftheDeep.mp3" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </div>
+    <div id="audioModal3" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="title">Media Player</span>
+                <span class="close" id="close3">&times;</span>
+            </div>
+            <div class="modal-body">
+                <u><b>Unnamed Album</b></u>
+                <p>3) Love Me Thrice</p>
+                <img src="Songs/LoveMeThrice.png" alt="Love Me Thrice" style="width:450px; height:450px">
+                <div class="progress-bar">
+                    <div class="progress" id="progress3"></div>
+                </div>
+                <div class="media-controls">
+                    <button class="playButton" id="playPause3">&#9658;</button>
+                    <button id="stop3">&#9632;</button>
+                </div>
+                <audio id="audio3">
+                    <source src="songs/LoveMeThrice.mp3" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </div>
+    <div id="audioModal4" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="title">Media Player</span>
+                <span class="close" id="close4">&times;</span>
+            </div>
+            <div class="modal-body">
+                <u><b>Unnamed Album</b></u>
+                <p>4) Placeholder ft. Unsigned Famous Artist TBD</p>
+                <img src="Songs/MorningWood.png" alt="Morning Wood" style="width:450px; height:450px">
+
+                <div class="progress-bar">
+                    <div class="progress" id="progress4"></div>
+                </div>
+                <div class="media-controls">
+                    <button class="playButton" id="playPause4">&#9658;</button>
+                    <button id="stop4">&#9632;</button>
+                </div>
+                <audio id="audio4">
+                    <source src="songs/MorningWood.mp3" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </div>
+
+    <div id="TarotModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="title">Tarot Card Details</span>
+                <span class="close" id="close7">&times;</span>
+            </div>
+            <div class="modal-body" style="text-align: justify;">
+                <p>
+                    You must determine which two party guests the six tarot cards belong to.
+                    Once you think you have identified a guest's identity, create a six-letter passcode using:
+                <ul>
+                    <li>
+                        The first two letters of their title
+                    </li>
+                    <li>
+                        The first two letters of their first name
+                    </li>
+                    <li>
+                        The first two letters of their last name
+                    </li>
+                </ul>
+                If a suspected character does not have a title, use the animal dial to designate the absence of a title.
+
+                Each tarot card corresponds to a specific lockbox canister.
+                Use the six-letter passcode you have formed to unlock the specified canister.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="BatteryModal" class="modal">
+        <div class="modal-content" style="width:750px">
+            <div class="modal-header">
+                <span class="title">Music Production Details</span>
+                <span class="close" id="close8">&times;</span>
+            </div>
+            <div class="modal-body" style="text-align: justify;">
+                <div>
+                    <i class="fa-solid fa-battery-quarter" style="font-size:100px;margin-right:12px"></i>
+                    <span style="font-size:70px;text-align: center;vertical-align: text-bottom;">Battery: 23% </span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress5"></div>
+                </div>
+
+                <h2>Troubleshooting</h2>
+                <p>
+                    Arthur Whitmore's digital studio holds the key to a vital secret. Among his projects, there are four songs he was preparing to promote for radio publication. Hidden within these
+                    songs are encoded numbers that, when combined in the correct order, will reveal the PIN needed to unlock his taped archive file. Follow these steps to uncover the truth:
+                <ul>
+                    <li>
+                        <b><u>Decode the Numbers</u></b>
+                        : Each song contains a hidden number. Listen intently to the lyrics, rhythms, and patterns to uncover these encoded digits.
+                    </li>
+                    <br />
+                    <li>
+                        <b><u>Follow the Publication Order</u></b>
+                        : Use the numbers from the songs in the order Arthur planned to publish them. This order may be found in his digital notes, calendar entries, or
+                        file metadata.
+                    </li>
+                    <br />
+                    <li>
+                        <b><u>Unlock the Secret</u></b>
+                        : Combine the numbers sequentially to form the PIN and use it to unlock Arthur Whitmore's taped archive file.
+                    </li>
+                </ul>
+                Dive deep into the music, follow the trail Arthur left, and piece together the code to unlock the mystery. Good luck!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="PrizeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="title">Text Editor</span>
+                <span class="close" id="close6">&times;</span>
+            </div>
+            <div class="modal-body">
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="toolbar">
+        <div>
+            <!-- <img src="home.png" alt="Home" style="height:65px;width:65px; margin-top:-35px;"> -->
+            <i class="fa-brands fa-windows" style="font-size: 25px"></i>
+
+            <i class="fa-solid fa-grip-lines" style="margin-left:10px; font-size: 15px"></i>
+            <i id="openWindow" class="fa-solid fa-photo-film" style="margin-left:25px;font-size: 25px;display:none"></i>
+        </div>
+        <div class="time" id="time"></div>
+
+        <div class="headerDivider"></div>
+        <div>
+            <i class="fa-solid fa-angle-up" style="padding-right:15px"></i>
+            <i class="fa-solid fa-window-restore" style="padding-right:15px"></i>
+            <i class="fa-solid fa-grip" style="padding-right:15px"></i>
+            <i class="fa-solid fa-wifi" style="padding-right:15px"></i>
+            <i id="icon8" class="fa-solid fa-battery-quarter" style="padding-right:15px"></i>
+            <i class="fa-solid fa-volume-high" style="padding-right:15px"></i>
+            <i class="fa-regular fa-message"></i>
+        </div>
+    </div>
+
+    <script>
+        let activeWindow = null;
+        let windowIcon = document.getElementById('openWindow');
+
+        function closeModal() {
+            windowIcon.style.display = "none";
+            activeWindow.style.display = 'none';
+        };
+
+        for (let i = 1; i <= 4; i++) {
+            const modal = document.getElementById('audioModal' + i);
+            activeWindow = modal;
+
+            document.getElementById('icon' + i).onclick = function () {
+                windowIcon.style.display = "flex";
+                modal.style.display = 'flex';
+                activeWindow = modal;
+            };
+            document.getElementById('close' + i).onclick = closeModal;
+        }
+
+        document.getElementById('icon5').onclick = function () {
+            let pin = prompt("This file is encrypted with a 4 digit PIN Code.\nEnter PIN:");
+
+            if (btoa(`${pin}`) === 'NTczNQ==') {
+                alert("Unencrypting and extracting...");
+                document.querySelectorAll('#PrizeModal .modal-body')[0].innerText = SECRET;
+                icon6.style.display = "block";
+            } else {
+                alert("Incorrect PIN!");
+            }
+        };
+
+        document.getElementById('icon6').onclick = function () {
+            const modal = document.getElementById('PrizeModal');
+            activeWindow = modal;
+
+            document.getElementById('icon6').onclick = function () {
+                windowIcon.style.display = "flex";
+                modal.style.display = 'flex';
+            };
+            document.getElementById('close6').onclick = closeModal;
+        };
+
+        document.getElementById('icon7').onclick = function () {
+            const modal = document.getElementById('TarotModal');
+            activeWindow = modal;
+            windowIcon.style.display = "flex";
+            modal.style.display = 'flex';
+            document.getElementById('close7').onclick = closeModal;
+        };
+
+        document.getElementById('icon8').onclick = function () {
+            const modal = document.getElementById('BatteryModal');
+            activeWindow = modal;
+            windowIcon.style.display = "flex";
+            modal.style.display = 'flex';
+            document.getElementById('close8').onclick = closeModal;
+        };
+
+
+        window.onclick = function (event) {
+            let modal1 = document.getElementById('audioModal1');
+            let modal2 = document.getElementById('audioModal2');
+            let modal3 = document.getElementById('audioModal3');
+            let modal4 = document.getElementById('audioModal4');
+            let modal6 = document.getElementById('audioModal6');
+            let modal7 = document.getElementById('audioModal7');
+            let modal8 = document.getElementById('audioModal8');
+            const windowIcon = document.getElementById('openWindow');
+
+            if (event.target === modal1) {
+                modal1.style.display = 'none';
+                document.getElementById('audio1').pause();
+            } else if (event.target === modal2) {
+                modal2.style.display = 'none';
+                document.getElementById('audio2').pause();
+            } else if (event.target === modal3) {
+                modal3.style.display = 'none';
+                document.getElementById('audio3').pause();
+            } else if (event.target === modal4) {
+                modal4.style.display = 'none';
+                document.getElementById('audio4').pause();
+            } else if (event.target === modal6) {
+                modal6.style.display = 'none';
+            } else if (event.target === modal7) {
+                modal7.style.display = 'none';
+            } else if (event.target === modal8) {
+                modal8.style.display = 'none';
+            }
+            windowIcon.style.display = "none";
+        };
+
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        setInterval(updateTime, 1000);
+
+        updateTime();
+
+        for (let i = 1; i <= 4; i++) {
+            const audio = document.getElementById('audio' + i);
+            const playPause = document.getElementById('playPause' + i);
+            const stop = document.getElementById('stop' + i);
+            const progress = document.getElementById('progress' + i);
+            const windowIcon = document.getElementById('openWindow');
+
+            window.onkeydown = function (event) {
+                if (event.key === "Escape") {
+                    const modals = document.querySelectorAll('.modal');
+                    modals.forEach(modal => {
+                        modal.style.display = 'none';
+                    });
+                    windowIcon.style.display = "none";
+
+                    const audios = document.querySelectorAll('audio');
+                    audios.forEach(audio => {
+                        audio.pause();
+                        audio.currentTime = 0;
+                    });
+                    playPause.innerHTML = '&#9658;';
+                }
+            };
+
+            playPause.onclick = function () {
+                if (audio.paused) {
+                    audio.play();
+                    playPause.innerHTML = '&#10074;&#10074;';
+                } else {
+                    audio.pause();
+                    playPause.innerHTML = '&#9658;';
+                }
+            };
+
+            stop.onclick = function () {
+                audio.pause();
+                audio.currentTime = 0;
+                playPause.innerHTML = '&#9658;';
+            };
+
+            audio.ontimeupdate = function () {
+                const progressValue = (audio.currentTime / audio.duration) * 100;
+                progress.style.width = progressValue + '%';
+            };
+
+            function enableProgressBarSeeking(audioElement, progressBar, progressElement) {
+                progressBar.onclick = function (event) {
+                    const rect = progressBar.getBoundingClientRect();
+                    const offsetX = event.clientX - rect.left;
+                    const width = rect.width;
+                    const clickPositionPercentage = offsetX / width;
+                    const newTime = audioElement.duration * clickPositionPercentage;
+                    audioElement.currentTime = newTime;
+                    progressElement.style.width = (clickPositionPercentage * 100) + '%';
+                };
+            }
+            enableProgressBarSeeking(audio, document.querySelector(`#audioModal${i} .progress-bar`), progress);
+        }
+
+        // TODO CHANGE LATER
+        const SECRET = atob('VGhlIGNvLWNvbnNwaXJhdG9yIGhhcyB0aGUgTGVnYWN5IFRyYWl0LiBUaGUgbXVyZGVyZXIgZG9lcyBub3QgaGF2ZSB0aGUgTW91cm5mdWwgVHJhaXQuIERldGVjdGl2ZSBNb3JnYW4gQmxhY2t3ZWxsIGFuZCBMYWR5IFBlbmVsb3BlIEhhc3RpbmdzIHJldmVhbCB0aGVpciBjb25mZXNzaW9uIGNhcmRzLg==');
+    </script>
+
+</body>
+
+</html>
